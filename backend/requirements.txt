@@ -1,1 +1,9 @@
-# requirements.txt
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+channels==4.0.0
+channels-redis==4.1.0
+Pillow==10.1.0
+psycopg2-binary==2.9.9
+python-decouple==3.8
+django-filter==23.4

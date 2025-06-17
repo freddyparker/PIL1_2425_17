@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFRI Covoiturage</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg,rgb(232, 234, 102) 0%,rgb(75, 162, 89) 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(67, 17, 17, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(99, 52, 52, 0.1);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-ronde {
+    width: 80px;      /* ajuste la taille selon tes besoins */
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff; /* optionnel, pour un fond blanc */
+}
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 40px 0;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            min-height: calc(100vh - 160px);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px;
+            border-radius: 20px;
+            height: fit-content;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .dashboard-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Ride Cards */
+        .ride-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .ride-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .ride-info {
+            flex: 1;
+        }
+
+        .ride-route {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .ride-details {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .ride-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .ride-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            display: flex;
+            height: 500px;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            overflow-y: auto;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .conversation-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .conversation-item:hover {
+            background: #e9ecef;
+        }
+
+        .conversation-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Profile styles */
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .profile-info h2 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .profile-info p {
+            color: #666;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-container {
+                height: 400px;
+            }
+            
+            .chat-sidebar {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <img src="frontend/Blue and White Modern Company Logo.png" alt="" class="logo-ronde" />
+                    PARKER
+                </div>
+                <div class="nav-buttons" id="navButtons">
+                    <a href="#" class="btn btn-outline" onclick="showLogin()">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Connexion
+                    </a>
+                    <a href="#" class="btn btn-primary" onclick="showRegister()">
+                        <i class="fas fa-user-plus"></i>
+                        S'inscrire
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Home Page -->
+            <div id="homePage" class="page active">
+                <section class="hero">
+                    <h1>Covoiturage IFRI</h1>
+                    <p>Partagez vos trajets avec vos camarades étudiants en toute simplicité</p>
+                    <div class="nav-buttons">
+                        <a href="#" class="btn btn-primary btn-lg" onclick="showRegister()">
+                            <i class="fas fa-rocket"></i>
+                            Commencer maintenant
+                        </a>
+                    </div>
+                </section>
+
+                <section class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Communauté étudiante</h3>
+                        <p>Connectez-vous uniquement avec des étudiants d'IFRI pour des trajets en toute confiance</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3>Matching intelligent</h3>
+                        <p>Notre algorithme trouve automatiquement les meilleurs trajets selon vos horaires et destinations</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Messagerie intégrée</h3>
+                        <p>Communiquez directement avec vos co-voitureurs grâce à notre chat en temps réel</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Login Page -->
+            <div id="loginPage" class="page">
+                <div class="auth-container">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Connexion</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">E-mail ou téléphone</label>
+                            <input type="text" id="loginEmail" class="form-control" required>
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Mot de passe</label>
+                            <input type="password" id="loginPassword" class="form-control" required>
+                            <div class="error-message" id="loginPasswordError"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Se connecter
+                            </button>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <a href="#" onclick="showForgotPassword()" style="color: #667eea; text-decoration: none; font-size: 14px;">
+                                Mot de passe oublié ?
+                            </a>
+                        </div>
+                        <div style="text-align: center;">
+                            <a href="#" onclick="showRegister()" style="color: #667eea; text-decoration: none;">
+                                Pas encore de compte ? S'inscrire
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Forgot Password Page -->
+            <div id="forgotPasswordPage" class="page">
+                <div class="auth-container">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Mot de passe oublié</h2>
+                    <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                        Entrez votre adresse e-mail pour recevoir un lien de réinitialisation
+                    </p>
+                    <form id="forgotPasswordForm">
+                        <div class="form-group">
+                            <label for="resetEmail">Adresse e-mail</label>
+                            <input type="email" id="resetEmail" class="form-control" required>
+                            <div class="error-message" id="resetEmailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-paper-plane"></i>
+                                Envoyer le lien de réinitialisation
+                            </button>
+                        </div>
+                        <div style="text-align: center;">
+                            <a href="#" onclick="showLogin()" style="color: #667eea; text-decoration: none;">
+                                <i class="fas fa-arrow-left"></i>
+                                Retour à la connexion
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Register Page -->
+            <div id="registerPage" class="page">
+                <div class="auth-container">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Inscription</h2>
+                    <form id="registerForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Prénom</label>
+                                <input type="text" id="firstName" class="form-control" required>
+                                <div class="error-message" id="firstNameError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Nom</label>
+                                <input type="text" id="lastName" class="form-control" required>
+                                <div class="error-message" id="lastNameError"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" class="form-control" required>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Numéro de téléphone</label>
+                            <input type="tel" id="phone" class="form-control" required>
+                            <div class="error-message" id="phoneError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" id="password" class="form-control" required>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmer le mot de passe</label>
+                            <input type="password" id="confirmPassword" class="form-control" required>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Rôle principal</label>
+                            <select id="role" class="form-control" required>
+                                <option value="">Choisir un rôle</option>
+                                <option value="conducteur">Conducteur</option>
+                                <option value="passager">Passager</option>
+                            </select>
+                            <div class="error-message" id="roleError"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-user-plus"></i>
+                                S'inscrire
+                            </button>
+                        </div>
+                        <div style="text-align: center;">
+                            <a href="#" onclick="showLogin()" style="color: #667eea; text-decoration: none;">
+                                Déjà un compte ? Se connecter
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboardPage" class="page">
+                <div class="dashboard">
+                    <aside class="sidebar">
+                        <ul class="sidebar-nav">
+                            <li><a href="#" class="dashboard-nav-link active" data-section="overview">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Aperçu
+                            </a></li>
+                            <li><a href="#" class="dashboard-nav-link" data-section="rides">
+                                <i class="fas fa-car"></i>
+                                Mes trajets
+                            </a></li>
+                            <li><a href="#" class="dashboard-nav-link" data-section="search">
+                                <i class="fas fa-search"></i>
+                                Rechercher
+                            </a></li>
+                            <li><a href="#" class="dashboard-nav-link" data-section="messages">
+                                <i class="fas fa-comments"></i>
+                                Messages
+                            </a></li>
+                            <li><a href="#" class="dashboard-nav-link" data-section="profile">
+                                <i class="fas fa-user"></i>
+                                Profil
+                            </a></li>
+                            <li><a href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Déconnexion
+                            </a></li>
+                        </ul>
+                    </aside>
+
+                    <main class="dashboard-content">
+                        <div id="overview" class="dashboard-section active">
+                            <h2 class="card-title">Bienvenue, <span id="userName">Étudiant</span>!</h2>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Vos prochains trajets</h3>
+                                    <a href="#" class="btn btn-primary btn-sm" onclick="showDashboardSection('rides')">
+                                        Voir tout
+                                    </a>
+                                </div>
+                                <div id="upcomingRides">
+                                    <div class="ride-card">
+                                        <div class="ride-info">
+                                            <div class="ride-route">Cotonou → IFRI</div>
+                                            <div class="ride-details">Demain, 07:30 • 2 places disponibles</div>
+                                        </div>
+                                        <div class="ride-actions">
+                                            <button class="btn btn-outline btn-sm">Détails</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rides" class="dashboard-section">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Mes trajets</h3>
+                                    <button class="btn btn-primary btn-sm" onclick="showCreateRideForm()">
+                                        <i class="fas fa-plus"></i>
+                                        Nouveau trajet
+                                    </button>
+                                </div>
+                                <div id="ridesList">
+                                    <div class="ride-card">
+                                        <div class="ride-info">
+                                            <div class="ride-route">Cotonou → IFRI</div>
+                                            <div class="ride-details">Lundi-Vendredi, 07:30 • 3 places disponibles</div>
+                                        </div>
+                                        <div class="ride-actions">
+                                            <button class="btn btn-outline btn-sm">Modifier</button>
+                                            <button class="btn btn-primary btn-sm">Voir demandes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="search" class="dashboard-section">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Rechercher un trajet</h3>
+                                </div>
+                                <form id="searchForm">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="departure">Départ</label>
+                                            <input type="text" id="departure" class="form-control" placeholder="Adresse de départ">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="destination">Destination</label>
+                                            <input type="text" id="destination" class="form-control" placeholder="Adresse d'arrivée">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="date">Date</label>
+                                            <input type="date" id="date" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="time">Heure</label>
+                                            <input type="time" id="time" class="form-control">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i>
+                                        Rechercher
+                                    </button>
+                                </form>
+                                <div id="searchResults" style="margin-top: 30px;">
+                                    <!-- Results will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="messages" class="dashboard-section">
+                            <div class="card">
+                                <h3>Messages</h3>
+                                <div class="chat-container">
+                                    <div class="chat-sidebar">
+                                        <div class="conversation-item active">
+                                            <strong>Marie Dupont</strong>
+                                            <div style="font-size: 14px; color: #666;">Trajet Cotonou → IFRI</div>
+                                        </div>
+                                        <div class="conversation-item">
+                                            <strong>Jean Martin</strong>
+                                            <div style="font-size: 14px; color: #666;">Covoiturage vendredi</div>
+                                        </div>
+                                    </div>
+                                    <div class="chat-main">
+                                        <div class="chat-header">
+                                            Marie Dupont - Trajet Cotonou → IFRI
+                                        </div>
+                                        <div class="chat-messages" id="chatMessages">
+                                            <div class="message received">
+                                                Salut ! Je peux te prendre demain matin pour aller à IFRI ?
+                                            </div>
+                                            <div class="message sent">
+                                                Parfait ! À quelle heure passes-tu ?
+                                            </div>
+                                            <div class="message received">
+                                                Je passe vers 7h30. Ça te va ?
+                                            </div>
+                                        </div>
+                                        <div class="chat-input">
+                                            <input type="text" placeholder="Tapez votre message..." id="messageInput">
+                                            <button class="btn btn-primary btn-sm" onclick="sendMessage()">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="profile" class="dashboard-section">
+                            <div class="card">
+                                <div class="profile-header">
+                                    <div class="profile-avatar" id="profileAvatar">
+                                        JD
+                                    </div>
+                                    <div class="profile-info">
+                                        <h2 id="profileName">John Doe</h2>
+                                        <p id="profileEmail">john.doe@ifri.edu</p>
+                                    </div>
+                                </div>
+                                
+                                <form id="profileForm">
+                                    <div class="profile-section">
+                                        <h3>Informations personnelles</h3>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="profileFirstName">Prénom</label>
+                                                <input type="text" id="profileFirstName" class="form-control" value="John">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="profileLastName">Nom</label>
+                                                <input type="text" id="profileLastName" class="form-control" value="Doe">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="profileEmailField">E-mail</label>
+                                                <input type="email" id="profileEmailField" class="form-control" value="john.doe@ifri.edu">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="profilePhone">Téléphone</label>
+                                                <input type="tel" id="profilePhone" class="form-control" value="+229 12 34 56 78">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="profile-section">
+                                        <h3>Préférences de trajet</h3>
+                                        <div class="form-group">
+                                            <label for="profileDeparture">Point de départ habituel</label>
+                                            <input type="text" id="profileDeparture" class="form-control" placeholder="Adresse de départ habituelle">
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="profileDepartureTime">Heure de départ habituelle</label>
+                                                <input type="time" id="profileDepartureTime" class="form-control" value="07:30">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="profileArrivalTime">Heure d'arrivée habituelle</label>
+                                                <input type="time" id="profileArrivalTime" class="form-control" value="18:00">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="profile-section" id="vehicleSection">
+                                        <h3>Informations véhicule (Conducteur)</h3>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="vehicleBrand">Marque</label>
+                                                <input type="text" id="vehicleBrand" class="form-control" placeholder="Toyota, Peugeot, etc.">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="vehicleModel">Modèle</label>
+                                                <input type="text" id="vehicleModel" class="form-control" placeholder="Corolla, 208, etc.">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="vehicleSeats">Nombre de places disponibles</label>
+                                            <select id="vehicleSeats" class="form-control">
+                                                <option value="1">1 place</option>
+                                                <option value="2">2 places</option>
+                                                <option value="3">3 places</option>
+                                                <option value="4">4 places</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            Sauvegarder les modifications
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Current user data (simulation)
+        let currentUser = null;
+        let conversations = [
+            {
+                id: 1,
+                name: "Marie Dupont",
+                topic: "Trajet Cotonou → IFRI",
+                messages: [
+                    { id: 1, text: "Salut ! Je peux te prendre demain matin pour aller à IFRI ?", sent: false, time: "10:30" },
+                    { id: 2, text: "Parfait ! À quelle heure passes-tu ?", sent: true, time: "10:32" },
+                    { id: 3, text: "Je passe vers 7h30. Ça te va ?", sent: false, time: "10:35" }
+                ]
+            },
+            {
+                id: 2,
+                name: "Jean Martin",
+                topic: "Covoiturage vendredi",
+                messages: [
+                    { id: 1, text: "Salut ! Tu as encore de la place vendredi ?", sent: false, time: "09:15" },
+                    { id: 2, text: "Oui bien sûr ! Rendez-vous à 7h25 ?", sent: true, time: "09:18" }
+                ]
+            }
+        ];
+        let currentConversation = conversations[0];
+
+        // Navigation functions
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function showLogin() {
+            showPage('loginPage');
+        }
+
+        function showRegister() {
+            showPage('registerPage');
+        }
+
+        function showForgotPassword() {
+            showPage('forgotPasswordPage');
+        }
+
+        function showDashboard() {
+            showPage('dashboardPage');
+            updateNavForLoggedInUser();
+        }
+
+        function showHome() {
+            showPage('homePage');
+            updateNavForLoggedOutUser();
+        }
+
+        function updateNavForLoggedInUser() {
+            const navButtons = document.getElementById('navButtons');
+            navButtons.innerHTML = `
+                <span style="color: #667eea; font-weight: 500;">
+                    <i class="fas fa-user"></i>
+                    ${currentUser ? currentUser.firstName + ' ' + currentUser.lastName : 'Utilisateur'}
+                </span>
+                <a href="#" class="btn btn-outline" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </a>
+            `;
+        }
+
+        function updateNavForLoggedOutUser() {
+            const navButtons = document.getElementById('navButtons');
+            navButtons.innerHTML = `
+                <a href="#" class="btn btn-outline" onclick="showLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Connexion
+                </a>
+                <a href="#" class="btn btn-primary" onclick="showRegister()">
+                    <i class="fas fa-user-plus"></i>
+                    S'inscrire
+                </a>
+            `;
+        }
+
+        function logout() {
+            currentUser = null;
+            showHome();
+        }
+
+        // Dashboard navigation
+        function showDashboardSection(sectionId) {
+            // Update sidebar navigation
+            document.querySelectorAll('.dashboard-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+
+            // Show corresponding section
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Dashboard navigation event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.dashboard-nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    if (section) {
+                        showDashboardSection(section);
+                    }
+                });
+            });
+        });
+
+        // Form validation functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^[\+]?[0-9\s\-\(\)]{8,}$/;
+            return re.test(phone);
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.add('error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+            }
+        }
+
+        function clearError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('error');
+            if (errorDiv) {
+                errorDiv.textContent = '';
+            }
+        }
+
+        function showSuccess(fieldId, message) {
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.className = 'success-message';
+            }
+        }
+
+        // Registration form handler
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            ['firstName', 'lastName', 'email', 'phone', 'password', 'confirmPassword', 'role'].forEach(clearError);
+            
+            let isValid = true;
+            
+            // Get form values
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const role = document.getElementById('role').value;
+            
+            // Validate fields
+            if (!firstName) {
+                showError('firstName', 'Le prénom est requis');
+                isValid = false;
+            }
+            
+            if (!lastName) {
+                showError('lastName', 'Le nom est requis');
+                isValid = false;
+            }
+            
+            if (!email) {
+                showError('email', 'L\'e-mail est requis');
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                showError('email', 'Format d\'e-mail invalide');
+                isValid = false;
+            }
+            
+            if (!phone) {
+                showError('phone', 'Le numéro de téléphone est requis');
+                isValid = false;
+            } else if (!validatePhone(phone)) {
+                showError('phone', 'Format de téléphone invalide');
+                isValid = false;
+            }
+            
+            if (!password) {
+                showError('password', 'Le mot de passe est requis');
+                isValid = false;
+            } else if (password.length < 6) {
+                showError('password', 'Le mot de passe doit contenir au moins 6 caractères');
+                isValid = false;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('confirmPassword', 'Les mots de passe ne correspondent pas');
+                isValid = false;
+            }
+            
+            if (!role) {
+                showError('role', 'Veuillez choisir un rôle');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Simulate registration success
+                currentUser = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: phone,
+                    role: role
+                };
+                
+                // Update user name in dashboard
+                document.getElementById('userName').textContent = firstName;
+                document.getElementById('profileName').textContent = firstName + ' ' + lastName;
+                document.getElementById('profileEmail').textContent = email;
+                document.getElementById('profileAvatar').textContent = firstName.charAt(0) + lastName.charAt(0);
+                
+                // Pre-fill profile form
+                document.getElementById('profileFirstName').value = firstName;
+                document.getElementById('profileLastName').value = lastName;
+                document.getElementById('profileEmailField').value = email;
+                document.getElementById('profilePhone').value = phone;
+                
+                showDashboard();
+                alert('Inscription réussie ! Bienvenue sur IFRI Covoiturage.');
+            }
+        });
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            clearError('loginEmail');
+            clearError('loginPassword');
+            
+            const emailOrPhone = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            let isValid = true;
+            
+            if (!emailOrPhone) {
+                showError('loginEmail', 'L\'e-mail ou téléphone est requis');
+                isValid = false;
+            }
+            
+            if (!password) {
+                showError('loginPassword', 'Le mot de passe est requis');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Simulate login success
+                currentUser = {
+                    firstName: "John",
+                    lastName: "Doe",
+                    email: "john.doe@ifri.edu",
+                    phone: "+229 12 34 56 78",
+                    role: "conducteur"
+                };
+                
+                document.getElementById('userName').textContent = currentUser.firstName;
+                showDashboard();
+                alert('Connexion réussie !');
+            }
+        });
+
+        // Forgot password form handler
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            clearError('resetEmail');
+            
+            const email = document.getElementById('resetEmail').value.trim();
+            
+            if (!email) {
+                showError('resetEmail', 'L\'adresse e-mail est requise');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('resetEmail', 'Format d\'e-mail invalide');
+                return;
+            }
+            
+            // Simulate sending reset email
+            showSuccess('resetEmail', 'Un lien de réinitialisation a été envoyé à votre adresse e-mail');
+            
+            setTimeout(() => {
+                alert('Vérifiez votre boîte e-mail pour le lien de réinitialisation.');
+                showLogin();
+            }, 2000);
+        });
+
+        // Profile form handler
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Profil mis à jour avec succès !');
+        });
+
+        // Search form handler
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const departure = document.getElementById('departure').value;
+            const destination = document.getElementById('destination').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            
+            // Simulate search results
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.innerHTML = `
+                <h4 style="margin-bottom: 20px;">Résultats de recherche</h4>
+                <div class="ride-card">
+                    <div class="ride-info">
+                        <div class="ride-route">${departure || 'Cotonou'} → ${destination || 'IFRI'}</div>
+                        <div class="ride-details">
+                            <strong>Marie Dupont</strong> • ${date || 'Demain'}, ${time || '07:30'} • 2 places disponibles
+                        </div>
+                        <div style="margin-top: 8px; color: #666; font-size: 14px;">
+                            <i class="fas fa-star" style="color: #ffc107;"></i> 4.8 • Toyota Corolla
+                        </div>
+                    </div>
+                    <div class="ride-actions">
+                        <button class="btn btn-outline btn-sm">Détails</button>
+                        <button class="btn btn-primary btn-sm" onclick="requestRide()">Demander</button>
+                    </div>
+                </div>
+                <div class="ride-card">
+                    <div class="ride-info">
+                        <div class="ride-route">${departure || 'Cotonou'} → ${destination || 'IFRI'}</div>
+                        <div class="ride-details">
+                            <strong>Jean Martin</strong> • ${date || 'Demain'}, ${time || '08:00'} • 1 place disponible
+                        </div>
+                        <div style="margin-top: 8px; color: #666; font-size: 14px;">
+                            <i class="fas fa-star" style="color: #ffc107;"></i> 4.5 • Peugeot 208
+                        </div>
+                    </div>
+                    <div class="ride-actions">
+                        <button class="btn btn-outline btn-sm">Détails</button>
+                        <button class="btn btn-primary btn-sm" onclick="requestRide()">Demander</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Chat functions
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                // Add message to current conversation
+                const newMessage = {
+                    id: Date.now(),
+                    text: message,
+                    sent: true,
+                    time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                };
+                
+                currentConversation.messages.push(newMessage);
+                
+                // Update chat display
+                updateChatMessages();
+                
+                // Clear input
+                messageInput.value = '';
+                
+                // Simulate response after a delay
+                setTimeout(() => {
+                    const response = {
+                        id: Date.now(),
+                        text: "Message reçu ! Je vous réponds bientôt.",
+                        sent: false,
+                        time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                    };
+                    currentConversation.messages.push(response);
+                    updateChatMessages();
+                }, 1000);
+            }
+        }
+
+        function updateChatMessages() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = currentConversation.messages.map(msg => `
+                <div class="message ${msg.sent ? 'sent' : 'received'}">
+                    ${msg.text}
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
+                        ${msg.time}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Utility functions
+        function requestRide() {
+            alert('Demande de covoiturage envoyée ! Le conducteur recevra une notification.');
+        }
+
+        function showCreateRideForm() {
+            alert('Fonctionnalité de création de trajet en cours de développement.');
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Set default time
+            document.getElementById('time').value = '07:30';
+            
+            // Initialize chat messages
+            updateChatMessages();
+        });
+    </script>
+</body>
+</html>

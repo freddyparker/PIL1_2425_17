@@ -19,6 +19,17 @@ CREATE TABLE utilisateurs (
     vehicule_marque VARCHAR(100),
     vehicule_modele VARCHAR(100),
     vehicule_places INT CHECK (vehicule_places >= 0)
+
+    ALTER TABLE utilisateurs ADD COLUMN dernier_sos TIMESTAMP NULL;
+CREATE TABLE sos_alertes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    latitude DOUBLE,
+    longitude DOUBLE,
+    date_alerte TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
+);
+
 );
 
 -- Table trajets (offres et demandes)
@@ -31,6 +42,25 @@ CREATE TABLE trajets (
     horaire_depart DATETIME NOT NULL,
     places_disponibles INT DEFAULT 0 CHECK (places_disponibles >= 0),
     date_publication TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
+);
+-- Table trajets_reccurents
+CREATE TABLE trajets_recurrents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    jour_semaine ENUM('lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'),
+    point_depart VARCHAR(255),
+    point_arrivee VARCHAR(255),
+    horaire_depart TIME,
+    places_disponibles INT,
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
+);
+-- Table recompenses
+CREATE TABLE recompenses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id INT NOT NULL,
+    points INT DEFAULT 0,
+    niveau ENUM('Bronze', 'Argent', 'Or', 'Platine') DEFAULT 'Bronze',
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
 );
 
@@ -70,7 +100,17 @@ CREATE TABLE messages (
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
     FOREIGN KEY (expediteur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
 );
-
+-- Table evaluations
+CREATE TABLE evaluations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    auteur_id INT NOT NULL,
+    cible_id INT NOT NULL,
+    note TINYINT CHECK (note BETWEEN 1 AND 5),
+    commentaire TEXT,
+    date_evaluation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (auteur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (cible_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
+);
 -- Table notifications
 CREATE TABLE notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -84,17 +124,17 @@ CREATE TABLE notifications (
 -- Insertion d'exemples dans utilisateurs
 INSERT INTO utilisateurs (id, nom, prenom, telephone, email, mot_de_passe, role, photo_profil, point_depart_habituel, horaire_depart_habituel, horaire_arrivee_habituel, vehicule_marque, vehicule_modele, vehicule_places)
 VALUES
-(1, 'Dupont', 'Jean', '0600000001', 'jean.dupont@example.com', 'motdepasse123', 'conducteur', NULL, 'Kpota, Kalavi', '08:00:00', '09:00:00', 'Peugeot', '208', 3),
-(2, 'Martin', 'Claire', '0600000002', 'claire.martin@example.com', 'motdepasse456', 'passager', NULL, 'Bidossessi, Kalavi', '08:15:00', '09:15:00', NULL, NULL, NULL);
+(1, 'Dupont', 'Jean', '0600000001', 'jean.dupont@example.com', 'motdepasse123', 'conducteur', NULL, 'Kpota, ', '08:00:00', '09:00:00', 'Peugeot', '208', 3),
+(2, 'Martin', 'Claire', '0600000002', 'claire.martin@example.com', 'motdepasse456', 'passager', NULL, 'Bidossessi, ', '08:15:00', '09:15:00', NULL, NULL, NULL);
 
 -- Insertion d'exemples dans trajets
 INSERT INTO trajets (id, utilisateur_id, type_trajet, point_depart, point_arrivee, horaire_depart, places_disponibles)
 VALUES
-(1, 1, 'offre', 'Kpota, Kalavi', 'Campus, Kalavi', '2025-06-12 08:00:00', 3),
-(2, 2, 'demande', 'Bidossessi, Kalavi', 'Campus, Kalavi', '2025-06-12 08:15:00', 0);
+(1, 1, 'offre', 'Kpota, Calavi', 'Campus, ', '2025-06-12 08:00:00', 3),
+(2, 2, 'demande', 'Bidossessi, Calavi', 'Campus, ', '2025-06-12 08:15:00', 0);
 
 -- Insertion d'une correspondance
-INSERT INTO correspondances (id, trajet_conducteur_id, trajet_passager_id, statut)
+INSERT INTO correspondances (id, trajet_conducteur_id, trajet_passager_id, statut)-
 VALUES (1, 1, 2, 'propose');
 
 -- Insertion d'une conversation

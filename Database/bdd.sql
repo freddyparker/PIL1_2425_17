@@ -20,7 +20,7 @@ CREATE TABLE utilisateurs (
     vehicule_modele VARCHAR(100),
     vehicule_places INT CHECK (vehicule_places >= 0)
 );
-
+w
 -- Table trajets (offres et demandes)
 CREATE TABLE trajets (
     id INT AUTO_INCREMENT PRIMARY KEY,

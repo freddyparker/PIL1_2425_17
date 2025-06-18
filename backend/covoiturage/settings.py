@@ -69,14 +69,19 @@ WSGI_APPLICATION = 'covoiturage.wsgi.application'
 ASGI_APPLICATION = 'covoiturage.asgi.application'
 
 # Database
+# ...existing code...
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='covoiturage_ifri'),
-        'USER': config('DB_USER', default='postgres'),
-        'PASSWORD': config('DB_PASSWORD', default='password'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'IFRI',  # Correspond au "Connection Name" dans l'interface
+        'USER': 'root',  # Correspond au "Username" dans l'interface
+        'PASSWORD': '1234',    # Laissez vide car le mot de passe n'est pas défini dans l'interface
+        'HOST': '127.0.0.1',  # Correspond au "Hostname"
+        'PORT': '3306',    # Correspond au port spécifié
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 

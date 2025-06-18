@@ -31,7 +31,7 @@ CREATE TABLE sos_alertes (
 );
 
 );
-
+w
 -- Table trajets (offres et demandes)
 CREATE TABLE trajets (
     id INT AUTO_INCREMENT PRIMARY KEY,

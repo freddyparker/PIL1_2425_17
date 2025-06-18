@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <UNI-DRIVE>Rapport de Fin de Projet - Application de Covoiturage :UNI-DRIVE</UNI-DRIVE>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            background-color: #ffffff;
+            color: #000;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        code,
+        pre {
+            background-color: #eef;
+            padding: 10px;
+            display: block;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        ul,
+        ol {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Rapport de Fin de Projet<br>Application de Covoiturage:UNI-DRIVE</h1>
+
+    <div class="section">
+        <h2>Noms des développeurs</h2>
+        <p><strong>Nom :</strong><br>
+            ASSIHOU Merveille Roger<br>
+            AGBONAN V. Mirabelle Chancelle Nina<br>
+            AIMAWA Safiathe Forlène<br>
+            DEKADJEVI Pierre-Marie<br>
+            KOUADIO Ange L. Kadmiel<br>
+            TOSSOU Kuassi Aubin
+        </p>
+        <p><strong>Filière :</strong> Licence 1(toutes filières confondues) Informatique - IFRI</p>
+        <p><strong>Groupe :</strong> 17</p>
+        <p><strong>Date :</strong> Juin 2025</p>
+    </div>
+
+    <div class="section">
+        <h2>Présentation du projet</h2>
+        <p>Ce projet a consisté à développer une application de covoiturage permettant aux utilisateurs de proposer ou
+            de rechercher des trajets quotidiens. Le but est de favoriser le transport partagé tout en facilitant la
+            mise en relation entre conducteurs et passagers.</p>
+    </div>
+
+    <div class="section">
+        <h2>Mode de fonctionnement interne</h2>
+        <p>Le cœur du projet repose sur une base de données MySQL composée des tables suivantes :</p>
+        <ul>
+            <li><strong>utilisateurs :</strong> informations personnelles, rôle (conducteur/passager)</li>
+            <li><strong>trajets :</strong> trajets proposés ou recherchés</li>
+            <li><strong>correspondances :</strong> associations entre trajets compatibles</li>
+            <li><strong>messages :</strong> système de messagerie entre utilisateurs</li>
+            <li><strong>notifications :</strong> alertes automatiques</li>
+        </ul>
+        <p>Chaque entité est reliée par des clés étrangères assurant la cohérence des données.</p>
+    </div>
+
+    <div class="section">
+        <h2>Description de la conception</h2>
+        <p>Le modèle de base de données a été pensé pour assurer :</p>
+        <ul>
+            <li>Une intégrité référentielle rigoureuse (via les contraintes FOREIGN KEY)</li>
+            <li>Un rôle défini pour chaque utilisateur</li>
+            <li>Une évolutivité permettant d’ajouter d’autres fonctionnalités (paiement, historique...)</li>
+        </ul>
+        <p>Extrait du fichier <code>bdd.sql</code> :</p>
+        <pre><code>CREATE TABLE utilisateurs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100),
+    email VARCHAR(255),
+    mot_de_passe VARCHAR(255),
+    role ENUM('conducteur', 'passager')
+);</code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Instructions de déploiement</h2>
+        <ol>
+            <li>Installer MySQL et un éditeur SQL (Workbench, DBeaver...)</li>
+            <li>Créer la base de données avec la commande :</li>
+            <pre><code>CREATE DATABASE covoiturage_app;</code></pre>
+            <li>Exécuter le script <code>bdd.sql</code> pour créer toutes les tables</li>
+            <li>Vérifier l’insertion de données de test (utilisateurs, trajets...)</li>
+            <li>Tester des requêtes d’ajout, de jointure et de suppression</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Manuel d'utilisation</h2>
+        <ul>
+            <li>L'utilisateur s’inscrit (insertion dans <code>utilisateurs</code>)</li>
+            <li>Il propose ou recherche un trajet (<code>trajets</code>)</li>
+            <li>Le système cherche une correspondance compatible</li>
+            <li>Une discussion s’ouvre automatiquement (<code>messages</code>)</li>
+            <li>Une notification est générée</li>
+        </ul>
+        <p>Chaque action peut être simulée par une requête SQL.</p>
+    </div>
+    <div class="section">
+        <h2>Répartition des tâches</h2>
+        <p>
+            Dans le cadre de la réalisation de ce projet, chaque membre du groupe a contribué selon ses compétences :
+        </p>
+        <ul>
+            <li><strong>Forlène & Aubin</strong> : Conception et mise en place de la <em>base de données</em>
+                (modélisation, création des tables, scripts SQL).</li>
+            <li><strong>Forlène & Mirabelle</strong> : Rédaction du <em>rapport de projet</em> (présentation,
+                architecture, explication des choix techniques).</li>
+            <li><strong>Pierre-Marie</strong> : Développement du <em>Front-End</em> (interfaces utilisateurs,
+                navigation, design responsive).</li>
+            <li><strong>Freddy</strong> : Développement du <em>Back-End</em> (API, logique serveur, traitement des
+                requêtes).</li>
+            <li><strong>Ange</strong> : A apporté une <em>aide ponctuelle</em> sur divers aspects techniques.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Conclusion</h2>
+        <p>Ce projet a été l’occasion de comprendre la logique d’une application métier avec interactions complexes. Il
+            peut facilement évoluer vers une interface web en HTML/PHP ou une API mobile.</p>
+        <p><em>Travail réalisé par ASSIHOU Merveille Roger;AGBONAN V.Mirabelle Chancelle Nina;AIMAWA Safiathe
+                Forlène;DEKADJEVI Pierre-Marie;KOUADIO Ange l.Kadmiel;TOSSOU Kuassi Aubin, structuré et réfléchi.</em>
+        </p>
+
+    </div>
+</body>
+
+</html>

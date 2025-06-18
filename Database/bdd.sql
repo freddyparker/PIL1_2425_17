@@ -18,7 +18,9 @@ CREATE TABLE utilisateurs (
     date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     vehicule_marque VARCHAR(100),
     vehicule_modele VARCHAR(100),
-    vehicule_places INT CHECK (vehicule_places >= 0)
+    vehicule_places INT CHECK (vehicule_
+    
+    places >= 0)
 
     ALTER TABLE utilisateurs ADD COLUMN dernier_sos TIMESTAMP NULL;
 CREATE TABLE sos_alertes (
